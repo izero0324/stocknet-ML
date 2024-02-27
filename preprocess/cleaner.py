@@ -1,5 +1,6 @@
 import pandas as pd
 from preprocess.csv_reader import read
+from preprocess.tweet import count_tweets_for_date
 
 def clean_stock_data(stock_name):
     # Read the CSV file is named after the stock and located in 'price/raw/' folder
@@ -8,12 +9,28 @@ def clean_stock_data(stock_name):
     df = read(file_name)
     # Perform cleaning operations
     missing_data(df,stock_name)
-    df_cleaned = df.dropna()
+    df_dropna = df.dropna()
     
     # Correcting a specific data type
-    df_cleaned['date'] = pd.to_datetime(df_cleaned['Date'])
-    
-    return df_cleaned
+    df_dropna['date'] = pd.to_datetime(df_dropna['Date'])
+
+    # Filter 2014-2015
+    start_date = '2014-01-01'
+    end_date = '2015-12-31'
+    mask = (df['Date'] >= start_date) & (df['Date'] <= end_date)
+    df_tweet = df_dropna.loc[mask].copy() 
+    df_tweet['tweets_count'] = df_tweet['Date'].apply(lambda x: count_tweets_for_date(stock_name, x))
+
+    # Adding 'change' column
+    df_tweet['change'] = df_tweet['Open'] - df_tweet['Close']
+
+    # Adding 'candle_stick' column
+    df_tweet['candle_stick'] = df_tweet['High'] - df_tweet['Low']
+
+    # ReOrdering the columns
+    df_tweet = adjust_column_order(df_tweet)
+
+    return df_tweet
 
 def missing_data(df,stock_name):
     # Check for missing data in each column
@@ -25,3 +42,14 @@ def missing_data(df,stock_name):
     else:
         print(f"No missing data detected for {stock_name}.")
     return 0
+
+def adjust_column_order(df_filtered):
+    # Specifying the desired column order
+    ordered_columns = ["date", "Open", "High", "Low", "Close", "Adj Close", 
+                       "Volume", "change", "candle_stick", "tweets_count"]
+    
+    # Reordering the DataFrame columns
+    df_filtered = df_filtered[ordered_columns]
+    
+    return df_filtered
+

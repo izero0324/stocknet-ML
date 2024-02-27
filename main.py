@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from preprocess.cleaner import clean_stock_data
 
 with open('preprocess/interested_stocks.json', 'r') as file:
