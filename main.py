@@ -16,5 +16,6 @@ for stock_symbol in technology_stocks:
     # print the describe of the cleaned data
     print(f"Cleaned data preview for {stock_symbol}:")
     print(cleaned_data.describe())
+
     stock_indi += 1
     
