@@ -22,7 +22,7 @@ def clean_stock_data(stock_name):
     df_tweet['tweets_count'] = df_tweet['Date'].apply(lambda x: count_tweets_for_date(stock_name, x))
 
     # Adding 'change' column
-    df_tweet['change'] = df_tweet['Open'] - df_tweet['Close']
+    df_tweet['change'] = 100*(df_tweet['Open'] - df_tweet['Close'])/df_tweet['Open']
 
     # Adding 'candle_stick' column
     df_tweet['candle_stick'] = df_tweet['High'] - df_tweet['Low']
@@ -46,7 +46,7 @@ def missing_data(df,stock_name):
 def adjust_column_order(df_filtered):
     # Specifying the desired column order
     ordered_columns = ["date", "Open", "High", "Low", "Close", "Adj Close", 
-                       "Volume", "change", "candle_stick", "tweets_count"]
+                       "Volume", "tweets_count", "change", "candle_stick"]
     
     # Reordering the DataFrame columns
     df_filtered = df_filtered[ordered_columns]

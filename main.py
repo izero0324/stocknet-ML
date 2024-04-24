@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from preprocess.cleaner import clean_stock_data
+from train import linear_fit
 
 with open('preprocess/interested_stocks.json', 'r') as file:
     stock_data = json.load(file)
@@ -16,6 +17,8 @@ for stock_symbol in technology_stocks:
     # print the describe of the cleaned data
     print(f"Cleaned data preview for {stock_symbol}:")
     print(cleaned_data.describe())
+    
+    #linear_fit(cleaned_data)
 
     stock_indi += 1
     
